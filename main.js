@@ -100,18 +100,22 @@ async function main() {
         },
       });
 
-      // 새 이벤트 ID를 Notion Text 속성에 기록
-      if (page.properties["Calendar Event ID"]) {
-        await notion.pages.update({
-          page_id: page.id,
-          properties: {
-            "Calendar Event ID": {
-              text: [
-                { content: newEvent.data.id } 
-              ]
+      // Notion Text 속성에 새 Event ID 기록
+      try {
+        if (page.properties["Calendar Event ID"]) {
+          await notion.pages.update({
+            page_id: page.id,
+            properties: {
+              "Calendar Event ID": {
+                rich_text: [
+                  { text: { content: newEvent.data.id } }
+                ]
+              }
             }
-          }
-        });
+          });
+        }
+      } catch (err) {
+        console.log(`⚠️ Notion 업데이트 실패: ${title}`, err.message);
       }
 
       console.log(`✔️ 등록 완료: ${title} (${eventStart} ~ ${eventEndDate})`);
