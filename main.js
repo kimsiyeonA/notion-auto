@@ -67,13 +67,38 @@ async function main() {
 
   console.log(`✔️ 등록: ${title} (${start} ~ ${eventEnd})`);
 
+  const eventStart = start.split("T")[0];
+  const eventEndDate = (end || start).split("T")[0];
+  
+  const startDate = new Date(eventStart);
+  const endDate = new Date(eventEndDate);
+  endDate.setDate(endDate.getDate() + 1); // timeMax는 exclusive
+  
+  const existingEvents = await calendar.events.list({
+    calendarId: CALENDAR_ID,
+    timeMin: startDate.toISOString(),
+    timeMax: endDate.toISOString(),
+    singleEvents: true,
+    orderBy: "startTime",
+  });
+  
+  const alreadyExists = existingEvents.data.items.some(
+    (event) => event.summary === title
+  );
+  
+  if (alreadyExists) {
+    console.log(`⚠️ 이미 등록됨: ${title}`);
+    continue;
+  }
+  
+  // 등록
   await calendar.events.insert({
     calendarId: CALENDAR_ID,
     requestBody: {
       summary: title,
-      start: { date: start.split("T")[0] }, 
-      end: { date: (end || start).split("T")[0] }, 
-    }
+      start: { date: eventStart },
+      end: { date: eventEndDate },
+    },
   });
 }
 
