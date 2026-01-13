@@ -71,8 +71,8 @@ async function main() {
     calendarId: CALENDAR_ID,
     requestBody: {
       summary: title,
-      start: { date: start },
-      end: { date: eventEnd },
+      start: { date: start.split("T")[0] }, 
+      end: { date: (end || start).split("T")[0] }, 
     }
   });
 }
