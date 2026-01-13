@@ -58,26 +58,33 @@ async function main() {
     const endDate = new Date(eventEndDate);
     endDate.setDate(endDate.getDate() + 1); // timeMax는 exclusive
 
-    // Notion에 저장된 기존 Event ID 가져오기
-    const existingEventId = page.properties["Calendar Event ID"]?.rich_text?.[0]?.plain_text;
+    // Notion에 Calendar Event ID 속성이 없을 경우 건너뜀
+    let existingEventId = null;
+    try {
+      existingEventId = page.properties["Calendar Event ID"]?.rich_text?.[0]?.plain_text;
+      if (!existingEventId) {
+        console.log(`⚠️ "Calendar Event ID" 속성 없음 → 기존 이벤트 건너뜀: ${title}`);
+      }
+    } catch {
+      console.log(`⚠️ "Calendar Event ID" 속성 확인 실패 → 기존 이벤트 건너뜀: ${title}`);
+      existingEventId = null;
+    }
 
     let needCreate = true; // 새 이벤트 생성 여부
 
     if (existingEventId) {
       try {
-        // 기존 이벤트 가져오기
         const existingEvent = await calendar.events.get({
           calendarId: CALENDAR_ID,
           eventId: existingEventId,
         });
 
-        // 기존 이벤트 end date 확인
         const existingEnd = existingEvent.data.end?.date || existingEvent.data.end?.dateTime;
+
         if (existingEnd === eventEndDate) {
           console.log(`⚠️ 변경 없음 → 건너뜀: ${title}`);
-          needCreate = false; // 변경 없으면 건너뜀
+          needCreate = false;
         } else {
-          // 변경 있으면 삭제
           await calendar.events.delete({
             calendarId: CALENDAR_ID,
             eventId: existingEventId,
@@ -90,8 +97,7 @@ async function main() {
     }
 
     if (needCreate) {
-      // 새 이벤트 생성
-      const newEvent = await calendar.events.insert({
+      await calendar.events.insert({
         calendarId: CALENDAR_ID,
         requestBody: {
           summary: title,
@@ -99,17 +105,6 @@ async function main() {
           end: { date: eventEndDate },
         },
       });
-
-      // Notion에 새 Event ID 저장
-      await notion.pages.update({
-        page_id: page.id,
-        properties: {
-          "Calendar Event ID": {
-            rich_text: [{ text: { content: newEvent.data.id } }]
-          }
-        }
-      });
-
       console.log(`✔️ 등록 완료: ${title} (${eventStart} ~ ${eventEndDate})`);
     }
   }
