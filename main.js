@@ -10,7 +10,7 @@ const DATABASE_ID = process.env.NOTION_DB_ID;
 const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID;
 
 // Google Service Account 인증
-const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
 
 const jwtClient = new google.auth.JWT(
   credentials.client_email,
