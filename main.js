@@ -30,38 +30,38 @@ async function main() {
   console.log("📌 Notion 데이터 개수:", response.results.length);
 
   function getRollupDate(prop) {
-  if (!prop?.rollup) return null;
+    if (!prop?.rollup) return null;
+  
+    // case 1: rollup → date (가장 많은 케이스)
+    if (prop.rollup.type === "date") {
+      return prop.rollup.date?.start || null;
+    }
+  
+    // case 2: rollup → array
+    if (prop.rollup.array?.length > 0) {
+      return prop.rollup.array[0]?.date?.start || null;
+    }
+  
+    // case 3: rollup → results
+    if (prop.rollup.results?.length > 0) {
+      return prop.rollup.results[0]?.date?.start || null;
+    }
 
-  // case 1: rollup → date (가장 많은 케이스)
-  if (prop.rollup.type === "date") {
-    return prop.rollup.date?.start || null;
+    return null;
   }
 
-  // case 2: rollup → array
-  if (prop.rollup.array?.length > 0) {
-    return prop.rollup.array[0]?.date?.start || null;
-  }
-
-  // case 3: rollup → results
-  if (prop.rollup.results?.length > 0) {
-    return prop.rollup.results[0]?.date?.start || null;
-  }
-
-  return null;
-}
-
-for (const page of response.results) {
-
-  const title =
-    page.properties["강의제목"]?.title?.[0]?.plain_text || "제목 없음";
-
-  const start = getRollupDate(page.properties["최초 수강일"]);
-  const end = getRollupDate(page.properties["최종 수강일"]);
-
-  if (!start) {
-    console.log(`❌ 날짜 없음 → 건너뜀: ${title}`);
-    continue;
-  }
+  for (const page of response.results) {
+  
+    const title =
+      page.properties["강의제목"]?.title?.[0]?.plain_text || "제목 없음";
+  
+    const start = getRollupDate(page.properties["최초 수강일"]);
+    const end = getRollupDate(page.properties["최종 수강일"]);
+  
+    if (!start) {
+      console.log(`❌ 날짜 없음 → 건너뜀: ${title}`);
+      continue;
+    }
 
   const eventEnd = end || start;   // end 없으면 하루짜리로 처리
 
@@ -77,8 +77,8 @@ for (const page of response.results) {
   });
 }
 
-console.log("🎉 완료! Google Calendar 업데이트됨");
-
+  console.log("🎉 완료! Google Calendar 업데이트됨");
+}
 main().catch(err => {
   console.error("🔥 오류 발생", err);
   process.exit(1);
