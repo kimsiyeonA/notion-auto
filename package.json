@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
-    "@notionhq/client": "^2.2.5"
+    "@notionhq/client": "^2.2.5",
+    "googleapis": "^132.0.0"
   }
 }
