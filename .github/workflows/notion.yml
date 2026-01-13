@@ -1,0 +1,26 @@
+name: Notion Sync
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # 매시 실행
+  workflow_dispatch:      # 수동 실행 버튼
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install Dependencies
+        run: npm install
+      
+      - name: Run script
+        run: node main.js
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
