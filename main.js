@@ -5,7 +5,7 @@ const notion = new Client({
 });
 
 // ⚠️ 여기에 네 DB ID 넣기
-const DATABASE_ID = "2cb362898815808fb014c749751e6342?v=2cb362898815802bba3c000c2a3839a4";
+const DATABASE_ID = "2cb362898815808fb014c749751e6342";
 
 async function main() {
   const response = await notion.databases.query({
