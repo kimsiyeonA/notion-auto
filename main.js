@@ -59,7 +59,8 @@ async function main() {
     endDate.setDate(endDate.getDate() + 1); // timeMax exclusive
 
     // Notion Text 속성으로 기존 Event ID 가져오기
-    let existingEventId = page.properties["Calendar Event ID"]?.text || null;
+    const existingEventId = page.properties["Calendar Event ID"]?.rich_text?.[0]?.text?.content || null;
+
     if (!existingEventId) {
       console.log(`⚠️ "Calendar Event ID" 속성 없음 → 기존 이벤트 건너뜀: ${title}`);
     }
