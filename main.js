@@ -106,7 +106,9 @@ async function main() {
           page_id: page.id,
           properties: {
             "Calendar Event ID": {
-              text: newEvent.data.id
+              text: [
+                { content: newEvent.data.id } 
+              ]
             }
           }
         });
