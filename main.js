@@ -56,21 +56,15 @@ async function main() {
 
     const startDate = new Date(eventStart);
     const endDate = new Date(eventEndDate);
-    endDate.setDate(endDate.getDate() + 1); // timeMax는 exclusive
+    endDate.setDate(endDate.getDate() + 1); // timeMax exclusive
 
-    // Notion에 Calendar Event ID 속성이 없을 경우 건너뜀
-    let existingEventId = null;
-    try {
-      existingEventId = page.properties["Calendar Event ID"]?.rich_text?.[0]?.plain_text;
-      if (!existingEventId) {
-        console.log(`⚠️ "Calendar Event ID" 속성 없음 → 기존 이벤트 건너뜀: ${title}`);
-      }
-    } catch {
-      console.log(`⚠️ "Calendar Event ID" 속성 확인 실패 → 기존 이벤트 건너뜀: ${title}`);
-      existingEventId = null;
+    // Notion Text 속성으로 기존 Event ID 가져오기
+    let existingEventId = page.properties["Calendar Event ID"]?.text || null;
+    if (!existingEventId) {
+      console.log(`⚠️ "Calendar Event ID" 속성 없음 → 기존 이벤트 건너뜀: ${title}`);
     }
 
-    let needCreate = true; // 새 이벤트 생성 여부
+    let needCreate = true;
 
     if (existingEventId) {
       try {
@@ -97,7 +91,7 @@ async function main() {
     }
 
     if (needCreate) {
-      await calendar.events.insert({
+      const newEvent = await calendar.events.insert({
         calendarId: CALENDAR_ID,
         requestBody: {
           summary: title,
@@ -105,6 +99,19 @@ async function main() {
           end: { date: eventEndDate },
         },
       });
+
+      // 새 이벤트 ID를 Notion Text 속성에 기록
+      if (page.properties["Calendar Event ID"]) {
+        await notion.pages.update({
+          page_id: page.id,
+          properties: {
+            "Calendar Event ID": {
+              text: newEvent.data.id
+            }
+          }
+        });
+      }
+
       console.log(`✔️ 등록 완료: ${title} (${eventStart} ~ ${eventEndDate})`);
     }
   }
