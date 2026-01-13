@@ -5,7 +5,7 @@ const notion = new Client({
 });
 
 // notion DB ID 
-const DATABASE_ID = "2cb362898815808fb014c749751e6342";
+const DATABASE_ID = process.env.NOTION_DB_ID;
 // google calender ID
 const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID;
 
