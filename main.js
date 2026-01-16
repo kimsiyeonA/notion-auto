@@ -75,8 +75,8 @@ async function main() {
       await notion.pages.update({
         page_id: calendarPage.id,
         properties: {
-          시작일: { date: { start: startDate } },
-          종료일: { date: { start: endDate } }
+          "시작일": { date: { start: startDate } },
+          "종료일": { date: { start: endDate } }
         }
       });
 
@@ -86,13 +86,13 @@ async function main() {
       await notion.pages.create({
         parent: { database_id: CALENDAR_DB_ID },
         properties: {
-          이름: {
-            rich_text: [{ text: { content: title } }]
+          "이름": {
+            title: [{ text: { content: title } }]
           },
-          시작일: {
+          "시작일": {
             date: { start: startDate }
           },
-          종료일: {
+          "종료일": {
             date: { start: endDate }
           },
           "강의 목록 DB 연결 ID": {
