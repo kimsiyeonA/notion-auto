@@ -27,3 +27,5 @@ jobs:
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
           GOOGLE_CALENDAR_ID: ${{ secrets.GOOGLE_CALENDAR_ID }}
           GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+          LECTURE_DB_ID: ${{ secrets.LECTURE_DB_ID }}
+          CALENDAR_DB_ID: ${{ secrets.CALENDAR_DB_ID }}
