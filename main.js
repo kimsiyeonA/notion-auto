@@ -98,7 +98,7 @@ async function main() {
           "강의 목록 DB 연결 ID": {
             rich_text: [{ text: { content: page.id } }]
           },
-          강의 목록: {
+          "강의 목록": {
             relation: [{ id: page.id }]
           }
         }
