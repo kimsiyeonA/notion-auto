@@ -7,6 +7,8 @@ const notion = new Client({
 // DB IDs
 const LECTURE_DB_ID = process.env.LECTURE_DB_ID;   // A 강의 DB
 const CALENDAR_DB_ID = process.env.CALENDAR_DB_ID; // C 캘린더 DB
+console.log("LECTURE_DB_ID:", process.env.LECTURE_DB_ID);
+console.log("CALENDAR_DB_ID:", process.env.CALENDAR_DB_ID);
 
 function getRollupDate(prop) {
   if (!prop?.rollup) return null;
