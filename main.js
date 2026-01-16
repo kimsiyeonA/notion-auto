@@ -1,5 +1,4 @@
 // notion  <-> google calendar connect
-
 import { Client } from "@notionhq/client";
 import { google } from "googleapis"; 
 
@@ -11,6 +10,7 @@ const notion = new Client({
 const DATABASE_ID = process.env.NOTION_DB_ID;
 // Google Calendar ID
 const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID;
+
 // Google Service Account 인증
 const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
 
@@ -22,25 +22,6 @@ const jwtClient = new google.auth.JWT(
 );
 
 const calendar = google.calendar({ version: "v3", auth: jwtClient });
-
-const COLOR_POOL = [
-  "1",  // 파랑
-  "2",  // 초록
-  "4",  // 빨강
-  "5",  // 노랑
-  "6",  // 주황
-  "9",  // 보라
-  "10", // 청록
-];
-
-function getColorIdByTitle(title) {
-  let hash = 0;
-  for (let i = 0; i < title.length; i++) {
-    hash = title.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const index = Math.abs(hash) % COLOR_POOL.length;
-  return COLOR_POOL[index];
-}
 
 async function main() {
   const response = await notion.databases.query({
@@ -122,7 +103,6 @@ async function main() {
           summary: title,
           start: { date: eventStart },
           end: { date: eventEndDate },
-          colorId: getColorIdByTitle(title),
         },
       });
 
